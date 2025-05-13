@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tic Tac Toe</title>
+  <title>Tic Tac Toe with AI</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -20,8 +20,13 @@
       margin-bottom: 10px;
     }
 
-    .mode-select {
+    .controls {
       margin-bottom: 10px;
+    }
+
+    .controls select {
+      margin-left: 10px;
+      padding: 5px;
     }
 
     .board {
@@ -66,11 +71,18 @@
 
   <h1>Tic Tac Toe</h1>
 
-  <div class="mode-select">
-    <label for="mode">Select Mode:</label>
+  <div class="controls">
+    <label for="mode">Mode:</label>
     <select id="mode" onchange="changeMode(this.value)">
       <option value="2p">2 Player</option>
       <option value="ai">Play vs AI</option>
+    </select>
+
+    <label for="difficulty" id="difficulty-label" style="display:none;">Difficulty:</label>
+    <select id="difficulty" style="display:none;" onchange="changeDifficulty(this.value)">
+      <option value="easy">Easy</option>
+      <option value="medium">Medium</option>
+      <option value="unbeatable">Unbeatable</option>
     </select>
   </div>
 
@@ -81,20 +93,19 @@
   <script>
     const board = document.getElementById('board');
     const status = document.getElementById('status');
+    const difficultySelect = document.getElementById('difficulty');
+    const difficultyLabel = document.getElementById('difficulty-label');
+
     let currentPlayer = 'X';
     let gameActive = true;
     let cells = Array(9).fill('');
     let mode = '2p'; // '2p' or 'ai'
+    let difficulty = 'easy'; // easy, medium, unbeatable
 
     const winningCombinations = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6],
     ];
 
     function createBoard() {
@@ -131,26 +142,25 @@
       currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
       status.innerText = `Current Turn: ${currentPlayer}`;
 
-      // AI makes a move if it's AI mode and it's O's turn
       if (mode === 'ai' && currentPlayer === 'O') {
-        setTimeout(aiMove, 500); // small delay to simulate thinking
+        setTimeout(aiMove, 300);
       }
     }
 
     function aiMove() {
       if (!gameActive) return;
 
-      const emptyIndices = cells
-        .map((val, idx) => (val === '' ? idx : null))
-        .filter(val => val !== null);
+      let move;
+      if (difficulty === 'easy') {
+        move = randomMove();
+      } else if (difficulty === 'medium') {
+        move = Math.random() < 0.5 ? randomMove() : minimaxMove();
+      } else {
+        move = minimaxMove();
+      }
 
-      if (emptyIndices.length === 0) return;
-
-      const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
-      cells[randomIndex] = 'O';
-
-      const cellDiv = document.querySelector(`.cell[data-index='${randomIndex}']`);
-      cellDiv.innerText = 'O';
+      cells[move] = 'O';
+      document.querySelector(`.cell[data-index='${move}']`).innerText = 'O';
 
       if (checkWinner()) {
         status.innerText = "AI (O) wins!";
@@ -168,9 +178,65 @@
       status.innerText = `Current Turn: ${currentPlayer}`;
     }
 
+    function randomMove() {
+      const emptyIndices = cells.map((val, idx) => val === '' ? idx : null).filter(i => i !== null);
+      return emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+    }
+
+    function minimaxMove() {
+      function minimax(board, depth, isMaximizing) {
+        const winner = getWinner(board);
+        if (winner === 'O') return { score: 1 };
+        if (winner === 'X') return { score: -1 };
+        if (!board.includes('')) return { score: 0 };
+
+        if (isMaximizing) {
+          let bestScore = -Infinity;
+          let move;
+          for (let i = 0; i < 9; i++) {
+            if (board[i] === '') {
+              board[i] = 'O';
+              const result = minimax(board, depth + 1, false);
+              board[i] = '';
+              if (result.score > bestScore) {
+                bestScore = result.score;
+                move = i;
+              }
+            }
+          }
+          return { score: bestScore, move };
+        } else {
+          let bestScore = Infinity;
+          let move;
+          for (let i = 0; i < 9; i++) {
+            if (board[i] === '') {
+              board[i] = 'X';
+              const result = minimax(board, depth + 1, true);
+              board[i] = '';
+              if (result.score < bestScore) {
+                bestScore = result.score;
+                move = i;
+              }
+            }
+          }
+          return { score: bestScore, move };
+        }
+      }
+
+      return minimax([...cells], 0, true).move;
+    }
+
+    function getWinner(board) {
+      for (const [a, b, c] of winningCombinations) {
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          return board[a];
+        }
+      }
+      return null;
+    }
+
     function checkWinner() {
-      return winningCombinations.some(combo => {
-        const [a, b, c] = combo;
+      return winningCombinations.some(([a, b, c]) => {
         return cells[a] && cells[a] === cells[b] && cells[a] === cells[c];
       });
     }
@@ -185,6 +251,13 @@
 
     function changeMode(selectedMode) {
       mode = selectedMode;
+      difficultySelect.style.display = mode === 'ai' ? 'inline' : 'none';
+      difficultyLabel.style.display = mode === 'ai' ? 'inline' : 'none';
+      resetGame();
+    }
+
+    function changeDifficulty(level) {
+      difficulty = level;
       resetGame();
     }
 
