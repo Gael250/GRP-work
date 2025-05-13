@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tic Tac Toe with AI</title>
   <style>
+    #dashboardBtn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #555;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#dashboardBtn:hover {
+  background-color: #333;
+}
+
     body {
       font-family: Arial, sans-serif;
       background: #f9f9f9;
@@ -89,6 +104,7 @@
   <div class="board" id="board"></div>
   <div class="status" id="status">Current Turn: X</div>
   <button onclick="resetGame()">Restart</button>
+<a href="/"><button id="dashboardBtn">Back to Dashboard</button></a>
 
   <script>
     const board = document.getElementById('board');
