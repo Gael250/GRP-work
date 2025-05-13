@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Simon Game</title>
   <style>
+    #dashboardBtn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #555;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#dashboardBtn:hover {
+  background-color: #333;
+}
+
     body {
       font-family: Arial, sans-serif;
       display: flex;
@@ -95,6 +110,7 @@
 
   <div id="result"></div>
   <button id="restartBtn" onclick="startGame()">Restart Game</button>
+<a href="/"><button id="dashboardBtn">Back to Dashboard</button></a>
 
   <script>
     const colors = ['green', 'red', 'blue', 'yellow'];
