@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Simon Game</title>
   <style>
     body {
@@ -22,7 +22,7 @@
 
     #score {
       font-size: 1.5rem;
-      margin-bottom: 20px;
+      margin: 10px 0;
     }
 
     .btn-container {
@@ -30,7 +30,7 @@
       flex-wrap: wrap;
       width: 200px;
       height: 200px;
-      margin-top: 20px;
+      margin-top: 10px;
     }
 
     .btn {
@@ -39,12 +39,12 @@
       margin: 5px;
       border-radius: 10px;
       cursor: pointer;
-      opacity: 0.7;
-      transition: opacity 0.3s;
+      filter: brightness(50%);
+      transition: filter 0.3s, box-shadow 0.3s;
     }
 
     .btn:hover {
-      opacity: 1;
+      filter: brightness(70%);
     }
 
     .green { background-color: #4CAF50; }
@@ -53,9 +53,32 @@
     .yellow { background-color: #FFEB3B; }
 
     .active {
-      opacity: 1;
+      filter: brightness(120%);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
     }
 
+    #result {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: #d32f2f;
+      height: 24px;
+    }
+
+    #restartBtn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #1976D2;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: none;
+    }
+
+    #restartBtn:hover {
+      background-color: #1565C0;
+    }
   </style>
 </head>
 <body>
@@ -70,6 +93,9 @@
     <div class="btn yellow" id="yellow"></div>
   </div>
 
+  <div id="result"></div>
+  <button id="restartBtn" onclick="startGame()">Restart Game</button>
+
   <script>
     const colors = ['green', 'red', 'blue', 'yellow'];
     let gameSequence = [];
@@ -78,6 +104,9 @@
     let gameStarted = false;
 
     const scoreDisplay = document.getElementById('score');
+    const resultDisplay = document.getElementById('result');
+    const restartBtn = document.getElementById('restartBtn');
+
     const buttons = {
       green: document.getElementById('green'),
       red: document.getElementById('red'),
@@ -85,7 +114,6 @@
       yellow: document.getElementById('yellow'),
     };
 
-    // Add click event to each button
     Object.keys(buttons).forEach(color => {
       buttons[color].addEventListener('click', () => playerClick(color));
     });
@@ -95,6 +123,9 @@
       playerSequence = [];
       level = 0;
       gameStarted = true;
+      resultDisplay.textContent = '';
+      restartBtn.style.display = 'none';
+      scoreDisplay.textContent = `Score: 0`;
       nextRound();
     }
 
@@ -140,9 +171,9 @@
     }
 
     function gameOver() {
-      alert(`Game Over! Your final score was ${level}`);
-      scoreDisplay.textContent = `Score: 0`;
+      resultDisplay.textContent = `Game Over! Final Score: ${level}`;
       gameStarted = false;
+      restartBtn.style.display = 'inline-block';
     }
 
     window.onload = () => {
