@@ -4,19 +4,18 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Simple Express API',
+      title: 'Simple Score API',
       version: '1.0.0',
-      description: 'A basic Express API documented with Swagger',
+      description: 'Predefined scores for 4 players',
     },
     servers: [
       {
-        url: 'http://localhost:3000', // Or use your Render URL
+        url: 'http://localhost:3000',
       },
     ],
   },
-  apis: ['./routes/*.js'], // Path to the files with Swagger annotations
+  apis: ['./routes/*.js'], // Adjust if needed
 };
 
 const swaggerSpec = swaggerJSDoc(options);
 module.exports = swaggerSpec;
-/* */
