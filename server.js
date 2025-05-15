@@ -5,14 +5,15 @@ const port = 3000;
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 const cors = require('cors');
+//allow cors since it will reuquire it
 app.use(cors());
 
-// Serve static files (like CSS, JS, images)
-app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(express.static(path.join(__dirname, 'public')));
+//swagger usage its optional
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-const scoreRoutes = require('./routes/score.route.js'); // adjust the path if needed
+const scoreRoutes = require('./routes/score.route.js');
 app.use('/api', scoreRoutes);
 
 // Dashboard Route
