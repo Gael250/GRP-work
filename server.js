@@ -4,6 +4,8 @@ const app = express();
 const port = 3000;
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
+const cors = require('cors');
+app.use(cors());
 
 // Serve static files (like CSS, JS, images)
 app.use(express.static(path.join(__dirname, 'public')));
