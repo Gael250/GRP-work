@@ -1,15 +1,18 @@
+const express = require('express');
+const router = express.Router();
+
 /**
  * @swagger
  * tags:
  *   name: Scores
- *   description: Score management
+ *   description: Predefined list of player scores
  */
 
 /**
  * @swagger
  * /api/scores:
  *   get:
- *     summary: Get all scores
+ *     summary: Get predefined scores
  *     tags: [Scores]
  *     responses:
  *       200:
@@ -29,61 +32,18 @@
  *                     example: Alice
  *                   score:
  *                     type: integer
- *                     example: 12
+ *                     example: 20
  */
-
-/**
- * @swagger
- * /api/scores:
- *   post:
- *     summary: Submit a new score
- *     tags: [Scores]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - player
- *               - score
- *             properties:
- *               player:
- *                 type: string
- *                 example: Alice
- *               score:
- *                 type: integer
- *                 example: 15
- *     responses:
- *       201:
- *         description: Score submitted successfully
- *       400:
- *         description: Invalid input
- */
-
-const express = require('express');
-const router = express.Router();
-
-let scores = [];
 
 router.get('/scores', (req, res) => {
+  const scores = [
+    { id: 1, name: 'Alice', score: 20 },
+    { id: 2, name: 'Bob', score: 15 },
+    { id: 3, name: 'Charlie', score: 10 },
+    { id: 4, name: 'Diana', score: 25 }
+  ];
+
   res.json(scores);
-});
-
-router.post('/scores', (req, res) => {
-  const { player, score } = req.body;
-  if (!player || typeof score !== 'number') {
-    return res.status(400).json({ error: 'Invalid input' });
-  }
-
-  const newScore = {
-    id: scores.length + 1,
-    name: player,
-    score: score,
-  };
-
-  scores.push(newScore);
-  res.status(201).json({ message: 'Score submitted successfully', score: newScore });
 });
 
 module.exports = router;
